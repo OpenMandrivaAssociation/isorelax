@@ -29,6 +29,7 @@
 #
 
 %define cvstag  release-20050331
+%define gcj_support 1
 
 Name:           isorelax
 Summary:        Public interfaces for RELAX Core
@@ -39,7 +40,14 @@ Version:        0
 Release:        %mkrel 0.1.release20050331.1.2.1
 License:        MIT-style
 Group:          Development/Java
+%if %{gcj_support}
+Requires(post): java-gcj-compat
+Requires(postun): java-gcj-compat
+BuildRequires:  java-gcj-compat-devel
+%else
 BuildArch:      noarch
+BuildRequires:  java-devel
+%endif
 
 # mkdir isorelax-release-20050331-src
 # cd isorelax-release-20050331-src
@@ -103,13 +111,21 @@ install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
 cp -pr apidocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
 ln -s %{name}-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{name}
 
+%if %{gcj_support}
+%{_bindir}/aot-compile-rpm
+%endif
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(-,root,root)
+%defattr(0644,root,root,0755)
 %{_javadir}/*
+%if %{gcj_support}
+%dir %{_libdir}/gcj/%{name}
+%attr(-,root,root) %{_libdir}/gcj/%{name}/*
+%endif
 
 %files javadoc
-%defattr(-,root,root)
+%defattr(0644,root,root,0755)
 %doc %{_javadocdir}/*
