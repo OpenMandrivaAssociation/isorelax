@@ -37,7 +37,7 @@ Url:            http://iso-relax.sourceforge.net/
 Epoch:          1
 Version:        0
 # I can't use %%{cvstag} as dashes aren't allowed in Release tags
-Release:        %mkrel 0.1.release20050331.1.2.3
+Release:        %mkrel 0.1.release20050331.1.2.4
 License:        MIT-style
 Group:          Development/Java
 %if %{gcj_support}
@@ -60,7 +60,7 @@ Source0:        %{name}-%{cvstag}-src.tar.bz2
 Patch0:         %{name}-apidocsandcompressedjar.patch
 
 BuildRequires:  java-devel
-BuildRequires:  jpackage-utils >= 0:1.6
+BuildRequires:  java-rpmbuild >= 0:1.6
 BuildRequires:  ant
 BuildRequires:  xerces-j2
 BuildRequires:  xml-commons-jaxp-1.3-apis
