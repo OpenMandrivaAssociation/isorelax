@@ -66,7 +66,6 @@ BuildRequires:  xerces-j2
 BuildRequires:  xml-commons-jaxp-1.3-apis
 Requires:       xerces-j2
 Requires:       xml-commons-jaxp-1.3-apis
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
 The ISO RELAX project was started to host public interfaces 
