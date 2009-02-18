@@ -34,8 +34,8 @@
 Name:           isorelax
 Summary:        Public interfaces for RELAX Core
 Url:            http://iso-relax.sourceforge.net/
-Epoch:          1
-Version:        0
+Epoch:          0
+Version:        0.1
 # I can't use %%{cvstag} as dashes aren't allowed in Release tags
 Release:        %mkrel 0.1.release20050331.1.2.4
 License:        MIT-style
@@ -69,7 +69,7 @@ Requires:       xml-commons-jaxp-1.3-apis
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
-The ISO RELAX project was started to host public interfaces 
+The ISO RELAX project was started to host public interfaces
 useful for applications to support RELAX Core. Now, however,
 some of the hosted material is schema language-neutral.
 
