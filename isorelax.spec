@@ -29,23 +29,16 @@
 #
 
 %define cvstag  release-20050331
-%define gcj_support 1
 
 Name:           isorelax
 Summary:        Public interfaces for RELAX Core
 Url:            http://iso-relax.sourceforge.net/
-Epoch:          0
 Version:        0.1
-# I can't use %%{cvstag} as dashes aren't allowed in Release tags
-Release:        %mkrel 0.1.release20050331.1.2.6
-License:        MIT-style
+Release:        %mkrel 1
+License:        MIT
 Group:          Development/Java
-%if %{gcj_support}
-BuildRequires:  java-gcj-compat-devel
-%else
-BuildArch:      noarch
 BuildRequires:  java-devel
-%endif
+BuildArch:      noarch
 
 # mkdir isorelax-release-20050331-src
 # cd isorelax-release-20050331-src
@@ -94,35 +87,27 @@ xml-commons-jaxp-1.3-apis \
 %{ant} release
 
 %install
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 # jars
-install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
-install -m 644 %{name}.jar $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
-(cd $RPM_BUILD_ROOT%{_javadir} && \
+install -d -m 755 %{buildroot}%{_javadir}
+install -m 644 %{name}.jar %{buildroot}%{_javadir}/%{name}-%{version}.jar
+(cd %{buildroot}%{_javadir} && \
  for jar in *-%{version}*; do \
      ln -sf ${jar} `echo $jar| sed  "s|-%{version}||g"`; \
  done
 )
 
 # javadoc
-install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
-cp -pr apidocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
-ln -s %{name}-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{name}
-
-%if %{gcj_support}
-%{_bindir}/aot-compile-rpm
-%endif
+install -d -m 755 %{buildroot}%{_javadocdir}/%{name}-%{version}
+cp -pr apidocs/* %{buildroot}%{_javadocdir}/%{name}-%{version}
+ln -s %{name}-%{version} %{buildroot}%{_javadocdir}/%{name}
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files
 %defattr(0644,root,root,0755)
 %{_javadir}/*
-%if %{gcj_support}
-%dir %{_libdir}/gcj/%{name}
-%attr(-,root,root) %{_libdir}/gcj/%{name}/*
-%endif
 
 %files javadoc
 %defattr(0644,root,root,0755)
