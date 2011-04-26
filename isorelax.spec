@@ -29,16 +29,21 @@
 #
 
 %define cvstag  release-20050331
+%define gcj_support	1
 
 Name:           isorelax
 Summary:        Public interfaces for RELAX Core
 Url:            http://iso-relax.sourceforge.net/
 Version:        0.1
-Release:        %mkrel 1
+Release:        %mkrel 2
 License:        MIT
 Group:          Development/Java
-BuildRequires:  java-devel
-BuildArch:      noarch
+%if %{gcj_support} 	 
+BuildRequires:	java-gcj-compat-devel 	 
+%else 	 
+BuildArch:	noarch 	 
+BuildRequires:	java-devel
+%endif
 
 # mkdir isorelax-release-20050331-src
 # cd isorelax-release-20050331-src
@@ -98,17 +103,23 @@ install -m 644 %{name}.jar %{buildroot}%{_javadir}/%{name}-%{version}.jar
 )
 
 # javadoc
-install -d -m 755 %{buildroot}%{_javadocdir}/%{name}-%{version}
-cp -pr apidocs/* %{buildroot}%{_javadocdir}/%{name}-%{version}
-ln -s %{name}-%{version} %{buildroot}%{_javadocdir}/%{name}
+install -d -m 755 %{buildroot}%{_javadocdir}/%{name}
+cp -pr apidocs/* %{buildroot}%{_javadocdir}/%{name}
+
+%if %{gcj_support}
+%{_bindir}/aot-compile-rpm
+%endif
 
 %clean
 rm -rf %{buildroot}
 
 %files
-%defattr(0644,root,root,0755)
+%defattr(-,root,root,-)
 %{_javadir}/*
+%if %{gcj_support} 	 
+%{_libdir}/gcj/%{name}
+%endif
 
 %files javadoc
-%defattr(0644,root,root,0755)
-%doc %{_javadocdir}/*
+%defattr(-,root,root,-)
+%doc %{_javadocdir}/%{name}
