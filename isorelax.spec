@@ -123,3 +123,84 @@ rm -rf %{buildroot}
 %files javadoc
 %defattr(-,root,root,-)
 %doc %{_javadocdir}/%{name}
+
+
+%changelog
+* Tue Apr 26 2011 Paulo Andrade <pcpa@mandriva.com.br> 0.1-2mdv2011.0
++ Revision: 659415
+- Revert to build with gcj support and do not install versioned doc dir
+
+* Mon Apr 25 2011 Paulo Andrade <pcpa@mandriva.com.br> 0.1-1
++ Revision: 659069
+- Update and rebuild
+
+  + Christophe Fergeau <cfergeau@mandriva.com>
+    - rebuild
+
+  + Antoine Ginies <aginies@mandriva.com>
+    - rebuild
+
+  + Jérôme Soyer <saispo@mandriva.org>
+    - Bump Release
+
+* Wed Jan 02 2008 Olivier Blin <oblin@mandriva.com> 1:0-0.1.release20050331.1.2.4mdv2009.0
++ Revision: 140792
+- restore BuildRoot
+
+  + Thierry Vignaud <tv@mandriva.org>
+    - kill re-definition of %%buildroot on Pixel's request
+
+* Sun Dec 16 2007 Anssi Hannula <anssi@mandriva.org> 1:0-0.1.release20050331.1.2.4mdv2008.1
++ Revision: 120896
+- buildrequire java-rpmbuild, i.e. build with icedtea on x86(_64)
+
+* Sat Sep 15 2007 Anssi Hannula <anssi@mandriva.org> 1:0-0.1.release20050331.1.2.3mdv2008.0
++ Revision: 87393
+- rebuild to filter out autorequires of GCJ AOT objects
+- remove unnecessary Requires(post) on java-gcj-compat
+
+* Wed Jul 18 2007 Anssi Hannula <anssi@mandriva.org> 1:0-0.1.release20050331.1.2.2mdv2008.0
++ Revision: 53182
+- use xml-commons-jaxp-1.3-apis explicitely instead of the generic
+  xml-commons-apis which is provided by multiple packages (see bug #31473)
+
+* Tue Jul 03 2007 David Walluck <walluck@mandriva.org> 1:0-0.1.release20050331.1.2.1mdv2008.0
++ Revision: 47371
+- gcj support
+- Import isorelax
+
+
+
+* Tue Mar 06 2007 Vivek Lakshmanan <vivekl@redhat.com> 1:0-0.1.release20050331.1jpp.2.fc7
+- Rebuild
+
+* Tue Mar 06 2007 Vivek Lakshmanan <vivekl@redhat.com> 1:0-0.1.release20050331.1jpp.1.fc7
+- First Fedora build
+
+* Mon Feb 12 2007 Andrew Overholt <overholt@redhat.com> 1:0-0.1.release20050331.1jpp.1
+- Clean up
+- Remove tests
+- Fix e:nvr for new scheme (0.Z.tag.Xjpp.Y%%{?dist}) and bump epoch for
+  upgrades
+- Add instructions for how to create source drop
+- Don't do javadoc symlinking in %%post{,un}
+- Remove Obsoletes and Provides on isorelax-bootstrap as they were never
+  shipped in Fedora and I don't know what version to Obsolete/Provide
+
+* Wed Mar 22 2006 Ralph Apel <r.apel at r-apel.de> 0:0.1-0.20041111.2jpp
+- By default omit tests requiring xercesjarv
+- Add postun for javadoc
+- Drop useless macros for name, version, etc.
+
+* Tue Aug 23 2005 Ralph Apel <r.apel at r-apel.de> 0:0.1-0.20041111.1jpp
+- Upgrade to 20041111
+
+* Fri Apr 22 2005 Fernando Nasser <fnasser@redhat.com> 0:0.1-0.20030108.3jpp
+- Rebuild with standard version scheme
+
+* Wed Aug 25 2004 Ralph Apel <r.apel at r-apel.de> 0:0.1-0.20030108.2jpp
+- Build with ant-1.6.2
+
+* Tue Jul 06 2004 Ralph Apel <r.apel at r-apel.de> 0:0.1-0.20030108.1jpp
+- First build from sources into free section
+- Use xercesjarv instead of swift as verifier impl
