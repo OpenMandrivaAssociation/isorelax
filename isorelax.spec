@@ -1,3 +1,4 @@
+%{?_javapackages_macros:%_javapackages_macros}
 # Copyright (c) 2000-2005, JPackage Project
 # All rights reserved.
 #
@@ -28,22 +29,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-%define cvstag  release-20050331
-%define gcj_support	1
+%global cvstag  release-20050331
 
 Name:           isorelax
 Summary:        Public interfaces for RELAX Core
-Url:            http://iso-relax.sourceforge.net/
-Version:        0.1
-Release:        %mkrel 2
-License:        MIT
-Group:          Development/Java
-%if %{gcj_support} 	 
-BuildRequires:	java-gcj-compat-devel 	 
-%else 	 
-BuildArch:	noarch 	 
-BuildRequires:	java-devel
-%endif
+URL:            http://iso-relax.sourceforge.net/
+Epoch:          1
+Version:        0
+# I can't use %%{cvstag} as dashes aren't allowed in Release tags
+Release:        0.14.release20050331.1%{?dist}
+License:        MIT and ASL 1.1
+BuildArch:      noarch
 
 # mkdir isorelax-release-20050331-src
 # cd isorelax-release-20050331-src
@@ -55,121 +51,101 @@ BuildRequires:	java-devel
 # cd ..
 # tar cjf isorelax-release-20050331-src.tar.bz2 isorelax-release-20050331-src
 Source0:        %{name}-%{cvstag}-src.tar.bz2
+# There's no license in the upstream tarball so include it here
+Source1:        license.txt
+Source2:        http://repo2.maven.org/maven2/%{name}/%{name}/20030108/%{name}-20030108.pom
 Patch0:         %{name}-apidocsandcompressedjar.patch
 
-BuildRequires:  java-devel
-BuildRequires:  java-rpmbuild >= 0:1.6
+BuildRequires:  jpackage-utils >= 0:1.6
 BuildRequires:  ant
-BuildRequires:  xerces-j2
-BuildRequires:  xml-commons-jaxp-1.3-apis
-Requires:       xerces-j2
-Requires:       xml-commons-jaxp-1.3-apis
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
+Requires:       java
+Requires:       jpackage-utils
 
 %description
-The ISO RELAX project was started to host public interfaces
+The ISO RELAX project was started to host public interfaces 
 useful for applications to support RELAX Core. Now, however,
 some of the hosted material is schema language-neutral.
 
 %package javadoc
-Summary:        Javadoc for %{name}
-Group:          Development/Java
+Summary:        API documentation for %{name}
 
 %description javadoc
-Javadoc for %{name}.
+%{summary}.
 
 %prep
 %setup -q -n %{name}-%{cvstag}-src
-find . -name "*.jar" -exec rm -f {} \;
+find -name "*.jar" -delete
 ln -s %{_javadir}/ant.jar lib/
 %patch0 -p0
+cp %{SOURCE1} .
 
 %build
-export CLASSPATH=$(build-classpath \
-xerces-j2 \
-xml-commons-jaxp-1.3-apis \
-)
-%{ant} release
+ant release
 
 %install
-rm -rf %{buildroot}
 # jars
-install -d -m 755 %{buildroot}%{_javadir}
-install -m 644 %{name}.jar %{buildroot}%{_javadir}/%{name}-%{version}.jar
-(cd %{buildroot}%{_javadir} && \
- for jar in *-%{version}*; do \
-     ln -sf ${jar} `echo $jar| sed  "s|-%{version}||g"`; \
- done
-)
+install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
+install -m 644 %{name}.jar $RPM_BUILD_ROOT%{_javadir}/
 
 # javadoc
-install -d -m 755 %{buildroot}%{_javadocdir}/%{name}
-cp -pr apidocs/* %{buildroot}%{_javadocdir}/%{name}
+install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}
+cp -pr apidocs/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}/
 
-%if %{gcj_support}
-%{_bindir}/aot-compile-rpm
-%endif
+# POM and depmap
+install -d -m 755 $RPM_BUILD_ROOT%{_mavenpomdir}
+install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_mavenpomdir}/JPP-%{name}.pom
+%add_maven_depmap
 
-%clean
-rm -rf %{buildroot}
-
-%files
-%defattr(-,root,root,-)
-%{_javadir}/*
-%if %{gcj_support} 	 
-%{_libdir}/gcj/%{name}
-%endif
+%files -f .mfiles
+%doc license.txt
 
 %files javadoc
-%defattr(-,root,root,-)
-%doc %{_javadocdir}/%{name}
-
+%doc license.txt
+%{_javadocdir}/*
 
 %changelog
-* Tue Apr 26 2011 Paulo Andrade <pcpa@mandriva.com.br> 0.1-2mdv2011.0
-+ Revision: 659415
-- Revert to build with gcj support and do not install versioned doc dir
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:0-0.14.release20050331
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
-* Mon Apr 25 2011 Paulo Andrade <pcpa@mandriva.com.br> 0.1-1
-+ Revision: 659069
-- Update and rebuild
+* Fri Jun 14 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 1:0-0.13.release20050331
+- Update to current packaging guidelines
 
-  + Christophe Fergeau <cfergeau@mandriva.com>
-    - rebuild
+* Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:0-0.12.release20050331
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
-  + Antoine Ginies <aginies@mandriva.com>
-    - rebuild
+* Thu Nov  1 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 1:0-0.11.release20050331
+- Add maven POM
 
-  + Jérôme Soyer <saispo@mandriva.org>
-    - Bump Release
+* Mon Oct 22 2012 Mat Booth <fedora@matbooth.co.uk> - 1:0-0.10.release20050331
+- Include license text in %%doc section
 
-* Wed Jan 02 2008 Olivier Blin <oblin@mandriva.com> 1:0-0.1.release20050331.1.2.4mdv2009.0
-+ Revision: 140792
-- restore BuildRoot
+* Sun Oct 21 2012 Mat Booth <fedora@matbooth.co.uk> - 1:0-0.9.release20050331
+- A portion of /org/iso_relax/verifier/VerifierFactory.java is licenced under ASL 1.1
 
-  + Thierry Vignaud <tv@mandriva.org>
-    - kill re-definition of %%buildroot on Pixel's request
+* Thu Jul 19 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:0-0.8.release20050331
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
-* Sun Dec 16 2007 Anssi Hannula <anssi@mandriva.org> 1:0-0.1.release20050331.1.2.4mdv2008.1
-+ Revision: 120896
-- buildrequire java-rpmbuild, i.e. build with icedtea on x86(_64)
+* Fri Apr 6 2012 Alexander Kurtakov <akurtako@redhat.com> 1:0-0.7.release20050331
+- Update to current guidelines.
+- Drop all fake BR/R now.
 
-* Sat Sep 15 2007 Anssi Hannula <anssi@mandriva.org> 1:0-0.1.release20050331.1.2.3mdv2008.0
-+ Revision: 87393
-- rebuild to filter out autorequires of GCJ AOT objects
-- remove unnecessary Requires(post) on java-gcj-compat
+* Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:0-0.6.release20050331
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
-* Wed Jul 18 2007 Anssi Hannula <anssi@mandriva.org> 1:0-0.1.release20050331.1.2.2mdv2008.0
-+ Revision: 53182
-- use xml-commons-jaxp-1.3-apis explicitely instead of the generic
-  xml-commons-apis which is provided by multiple packages (see bug #31473)
+* Wed Feb 09 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:0-0.5.release20050331
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
-* Tue Jul 03 2007 David Walluck <walluck@mandriva.org> 1:0-0.1.release20050331.1.2.1mdv2008.0
-+ Revision: 47371
-- gcj support
-- Import isorelax
+* Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:0-0.4.release20050331
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
+* Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1:0-0.3.release20050331
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
+* Wed Jul  9 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 1:0-0.2.release20050331
+- drop repotag
+
+* Thu May 29 2008 Tom "spot" Callaway <tcallawa@redhat.com> 1:0-0.1.release20050331.1jpp.3
+- fix license tag
 
 * Tue Mar 06 2007 Vivek Lakshmanan <vivekl@redhat.com> 1:0-0.1.release20050331.1jpp.2.fc7
 - Rebuild
