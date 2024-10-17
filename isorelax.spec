@@ -33,7 +33,7 @@
 
 Name:           isorelax
 Summary:        Public interfaces for RELAX Core
-URL:            http://iso-relax.sourceforge.net/
+URL:            https://iso-relax.sourceforge.net/
 Epoch:          1
 Version:        0
 # I can't use %%{cvstag} as dashes aren't allowed in Release tags
